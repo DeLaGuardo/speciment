@@ -1,7 +1,8 @@
 (ns speciment.pattern
   (:require [clojure.string :as string]
             [clojure.test :as t]
-            [clojure.walk :as walk]))
+            [clojure.walk :as walk])
+  (:import (java.util.regex Pattern)))
 
 (defrecord Match [matches expected actual])
 (defrecord Missing [matches expected])
@@ -89,19 +90,32 @@
                res
 
                :else
-               (let [{expected' :expected actual' :actual matches' :matches :as res'} (match-fn matches data)]
+               (let [{expected' :expected matches' :matches :as res'} (match-fn matches data)]
                  (if (instance? Match res')
                    (recur (-> res
-                              (update :expected conj expected')
-                              (update :actual conj actual')
+                              (update :expected conj '_)
+                              (update :actual conj '_)
                               (assoc :matches matches'))
                           pairs)
                    (recur (->Mismatch matches' (conj expected expected') (conj actual res')) pairs))))
              res))
          (->Mismatch matches (type p) (type data)))))))
 
+(defn regex-matcher [^Pattern p]
+  (fn match-string
+    ([] (.pattern p))
+    ([data] (match-string {} data))
+    ([matches data]
+     (if (and (string? data)
+              (re-matches p data))
+       (->Match matches p data)
+       (->Mismatch matches (list 're-matches p) data)))))
+
 (defn matcher [p]
   (cond
+    (instance? java.util.regex.Pattern p)
+    (regex-matcher p)
+
     (map? p)
     (map-matcher p)
 
