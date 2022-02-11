@@ -123,6 +123,11 @@
 (defn match? [p data]
   (instance? Match ((matcher p) data)))
 
+(defn matches [p data]
+  (let [match ((matcher p) data)]
+    (when (instance? Match match)
+      (:matches match))))
+
 (defn- expected [match]
   (walk/prewalk
    (fn [node]
