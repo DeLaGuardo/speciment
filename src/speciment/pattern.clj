@@ -134,13 +134,14 @@
          (->Match matches data data)
          (->Mismatch matches p data))))))
 
-(defn match? [p data]
-  (instance? Match ((matcher p) data)))
+(defn match?
+  ([m] (instance? Match m))
+  ([p data] (match? ((matcher p) data))))
 
-(defn matches [p data]
-  (let [match ((matcher p) data)]
-    (when (instance? Match match)
-      (:matches match))))
+(defn matches
+  ([m] (when (match? m) (:matches m)))
+  ([p data]
+   (matches ((matcher p) data))))
 
 (defn expected [match]
   (walk/prewalk
