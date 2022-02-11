@@ -29,13 +29,13 @@
       [1 2 3 4]))
 
   (testing "bindings"
-    (is (= '{x [1 2 3]
-             y "qwe"
-             z true
-             Z false}
-           (sut/matches {"foo" ['?x 4 5]
-                         "bar" {"qwe" '?y}
-                         "baz" {"_" ['?z '?Z]}}
-                        {"foo" [[1 2 3] 4 5]
-                         "bar" {"qwe" "qwe"}
-                         "baz" {"_" [true false]}})))))
+    (is (match? '{x [1 2 3]
+                  y "qwe"
+                  z true
+                  Z false}
+                (sut/matches {"foo" ['?x 4 5]
+                              "bar" {"qwe" '?y}
+                              "baz" {"_" ['?z '?Z]}}
+                             {"foo" [[1 2 3] 4 5]
+                              "bar" {"qwe" "qwe"}
+                              "baz" {"_" [true false]}})))))

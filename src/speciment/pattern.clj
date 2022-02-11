@@ -128,7 +128,7 @@
     (when (instance? Match match)
       (:matches match))))
 
-(defn- expected [match]
+(defn expected [match]
   (walk/prewalk
    (fn [node]
      (if (or (instance? Match node)
@@ -138,7 +138,7 @@
        node))
    match))
 
-(defn- actual [match]
+(defn actual [match]
   (walk/prewalk
    (fn [node]
      (cond
